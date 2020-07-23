@@ -2,6 +2,6 @@ const express = require("express");
 const router = express.Router();
 
 // Handling all routes
-router.use("/api", require("./api/index"));
+router.use("/doctors", require("./doctors"));
 
 module.exports = router;

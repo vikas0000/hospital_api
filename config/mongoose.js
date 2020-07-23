@@ -1,14 +1,15 @@
 // Import library
 const mongoose = require("mongoose");
 
-// Connecting to DB
-const connectDB = async function() {
-  try {
-    await mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
-    console.log("Connection established to DB");
-  } catch (err) {
-    console.log(`Error establishing connection to db. ${err.message}`);
-  }
-};
+// Connecting to the DB
+mongoose.connect("mongodb://localhost/hospital_Api");
 
-module.exports = connectDB;
+const dataBase = mongoose.connection;
+
+dataBase.on('error', console.error.bind(console,'error connected to db'));
+dataBase.once('open', function(){
+    console.log('successful');
+});
+
+//export
+module.exports = dataBase;

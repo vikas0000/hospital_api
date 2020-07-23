@@ -1,9 +1,9 @@
-const Doctor = require("../../models/doctor");
+const doctor1 = require("../../models/doctor");
 
-exports.register = async (req, res) => {
-  try {
-    // Create a new doctor account
-    const user = await Doctor.create(req.body);
+module.exports.userRegister = function(req, res) {
+  
+    // Create account
+    const user = doctor1.create(req.body);
     // Get JWT token
     const token = user.getSignedJwtToken();
     // Return response
@@ -12,36 +12,39 @@ exports.register = async (req, res) => {
       body: user,
       token,
     });
-  } catch (err) {
-    // Error handling
-    res.status(400).json({
-      success: false,
-    });
-  }
 };
 
 
-exports.login = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    // Check if email and password is present
-    if (!email || !password) {
-      return res.status(400).json({ success: false });
+module.exports.userLogin = function (req, res){
+ 
+    const { userEmail, userPassword } = req.body;
+    // Check for email and password 
+    if (!userEmail || !userPassword) {
+
+      return res.status(400).json({ 
+        success: false 
+      });
     }
-    // Get doctor based on input
-    const user = await Doctor.findOne({ email: email }).select("+password");
-    // Error handling if invalid email
-    if (!user) {
-      return res.status(401).json({ success: false, message: "Invalid credentials" });
+    // Get the email
+    const findUser = doctor1.findOne({ userEmail: userEmail }).select("+userPassword");
+    // check the email status
+    if (!findUser) {
+      return res.status(401).json({ 
+        success: false, 
+        message: "Invalid details" 
+      });
     }
 
-    // Check if password matches
-    const isMatch = await user.matchPassword(password);
-    // Error handling if invalid password
-    if (!isMatch) {
-      return res.status(401).json({ success: false, message: "Invalid credentials" });
+    // check for matching password or not
+    const isMatched = user.matchPassword(userPassword);
+    // chedk for password validation
+    if (!isMatched) {
+      return res.status(401).json({ 
+        success: false, 
+        message: "Invalid details" 
+      });
     }
-    // Get JWT token
+  
     const token = user.getSignedJwtToken();
 
     // Return response
@@ -50,10 +53,5 @@ exports.login = async (req, res) => {
       body: user,
       token,
     });
-  } catch (err) {
-    // Error handling
-    res.status(400).json({
-      success: false,
-    });
-  }
+ 
 };
